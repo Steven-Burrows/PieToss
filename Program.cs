@@ -12,7 +12,7 @@ class Program
         // Estimates pi by repeatedly simulating fair coin toss sequences and
         // averaging the heads-to-tosses ratio at the first point where heads becomes the majority.
         // 
-        long giveup = (long)1e9; // Discard any streaks this long
+        long giveup = (long)10; // Discard any streaks this long - Looks like a big number ? Bigger it is the more accurate the results
 
 
         long seqCounter = 0;
@@ -37,18 +37,26 @@ class Program
 
         DateTime startTime = DateTime.Now;
         var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-        //var outputPath = Path.Combine(desktopPath, $"pi-results-{instanceCount}.csv");
         var outputPath = Path.Combine(desktopPath, $"pi-results.csv");
         if (!File.Exists(outputPath))
         {
             File.AppendAllText(outputPath, "Result Set,DP,Estimate,Sequences,Tosses,MaxStreak" + Environment.NewLine);
         }
 
+        var logPath = Path.Combine(desktopPath, $"pi-log.csv");
+        if (!File.Exists(logPath))
+        {
+            File.AppendAllText(logPath, "Result Set,Sequence,Estimate,Log,Tosses,MaxStreak" + Environment.NewLine);
+        }
+        var logFreq = 1000;
+
+
         Random RG = new Random();
 
         while (resultSet < 10)
         {
             resultSet++;
+            var resultDisplay = resultSetStart + resultSet;
             // Initialize results for each decimal place from 2 to 8
             results = new List<MatchResult>();
             for (int dp = 2; dp <= 8; dp++)
@@ -86,7 +94,6 @@ class Program
                             seqSum += (decimal)heads / tosses;
                             maxStreak = Math.Max(maxStreak, tosses);
                             var estimate = 4 * seqSum / seqCounter;
-                            Console.WriteLine($"Results {resultSet} - Sequences {seqCounter:N0}  pi {(estimate):N10} ({maxStreak:N0} {tosses:N0}) TPS {Math.Log10(totalTossesAll / ((DateTime.Now - startTime).TotalSeconds)):N1}");
 
                             // Check for new matches for each decimal place and update results
                             foreach (var result in results.Where(r => !r.Done && r.TryMatch(estimate)))
@@ -96,9 +103,15 @@ class Program
                                 result.MaxStreak = maxStreak;
                                 result.PiEstimate = estimate;
 
-                                Console.WriteLine($"\nResult {resultSet} - DP {result.DecimalPlaces} - Sequences {seqCounter:N0} - Max Streak {maxStreak:N0} - Total Coin Tosses {totalTosses:N0}\n");
-                                File.AppendAllText(outputPath, $"{resultSetStart + resultSet},{result.DecimalPlaces},{estimate},{seqCounter},{totalTosses},{maxStreak}" + Environment.NewLine);
+                                Console.WriteLine($"\nResult {resultDisplay} - DP {result.DecimalPlaces} - Sequences {seqCounter:N0} - Max Streak {maxStreak:N0} - Total Coin Tosses {totalTosses:N0}\n");
+                                File.AppendAllText(outputPath, $"{resultDisplay},{result.DecimalPlaces},{estimate},{seqCounter},{totalTosses},{maxStreak}" + Environment.NewLine);
                                 //Console.Beep(1000, 50);
+                            }
+
+                            if (logFreq > 0 && seqCounter % logFreq == 0)
+                            {
+                                Console.WriteLine($"Results {resultDisplay} - Sequences {seqCounter:N0}  pi {(estimate):N10} ({maxStreak:N0}) TPS {Math.Log10(totalTossesAll / ((DateTime.Now - startTime).TotalSeconds)):N1}");
+                                File.AppendAllText(logPath, $"{resultDisplay},{seqCounter},{estimate},{Math.Log((double)estimate, Math.PI)},{totalTosses},{maxStreak}" + Environment.NewLine);
                             }
                         }
                         else
