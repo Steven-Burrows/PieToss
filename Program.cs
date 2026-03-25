@@ -13,7 +13,8 @@ class Program
         // averaging the heads-to-tosses ratio at the first point where heads becomes the majority.
         // 
         long giveup = (long)1e10; // Discard any streaks this long - Looks like a big number ? Bigger it is the more accurate the results
-
+        int sets = 10; // Number of result sets to generate (each set will find the first match for each decimal place from 2 to 8)
+        var logFreq = 1000;
 
         long seqCounter = 0;
         decimal seqSum = 0;
@@ -32,7 +33,7 @@ class Program
         //Count the number of instances of the program running
         var processName = Process.GetCurrentProcess().ProcessName;
         var instanceCount = Process.GetProcessesByName(processName).Length;
-        var resultSetStart = 10 * (instanceCount - 1);
+        var resultSetStart = sets * (instanceCount - 1);
 
 
         DateTime startTime = DateTime.Now;
@@ -48,12 +49,11 @@ class Program
         {
             File.AppendAllText(logPath, "Result Set,Sequence,Estimate,Log,Tosses,MaxStreak" + Environment.NewLine);
         }
-        var logFreq = 1000;
 
 
         Random RG = new Random();
 
-        while (resultSet < 10)
+        while (resultSet < sets)
         {
             resultSet++;
             var resultDisplay = resultSetStart + resultSet;
@@ -110,7 +110,7 @@ class Program
 
                             if (logFreq > 0 && seqCounter % logFreq == 0)
                             {
-                                Console.WriteLine($"Results {resultDisplay} - Sequences {seqCounter:N0}  pi {(estimate):N10} ({maxStreak:N0}) TPS {Math.Log10(totalTossesAll / ((DateTime.Now - startTime).TotalSeconds)):N1}");
+                                Console.WriteLine($"Result {resultDisplay} - Sequences {seqCounter:N0}  pi {(estimate):N10} ({maxStreak:N0}) TPS {Math.Log10(totalTossesAll / ((DateTime.Now - startTime).TotalSeconds)):N1}");
                                 File.AppendAllText(logPath, $"{resultDisplay},{seqCounter},{estimate},{Math.Log((double)estimate, Math.PI)},{totalTosses},{maxStreak}" + Environment.NewLine);
                             }
                         }
