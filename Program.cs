@@ -13,6 +13,7 @@ class Program
         // averaging the heads-to-tosses ratio at the first point where heads becomes the majority.
         // 
         long giveup = (long)1e10; // Discard any streaks this long - Looks like a big number ? Bigger it is the more accurate the results
+        giveup = 0;
         int sets = 10; // Number of result sets to generate (each set will find the first match for each decimal place from 2 to 8)
         var logFreq = 1000;
 
@@ -84,11 +85,11 @@ class Program
                     heads++;
 
                     // Sequence ends when heads is more than half of tosses or giveup is reached
-                    if ((2 * heads > tosses) || tosses >= giveup)
+                    if ((2 * heads > tosses) || (giveup > 0 && tosses >= giveup))
                     {
                         totalTosses += tosses;
                         totalTossesAll += tosses;
-                        if (tosses < giveup)
+                        if (tosses < giveup || giveup == 0)
                         {
                             seqCounter++;
                             seqSum += (decimal)heads / tosses;
