@@ -12,7 +12,7 @@ class Program
         // Estimates pi by repeatedly simulating fair coin toss sequences and
         // averaging the heads-to-tosses ratio at the first point where heads becomes the majority.
         // 
-        long giveup = (long)10; // Discard any streaks this long - Looks like a big number ? Bigger it is the more accurate the results
+        long giveup = (long)1e10; // Discard any streaks this long - Looks like a big number ? Bigger it is the more accurate the results
 
 
         long seqCounter = 0;
