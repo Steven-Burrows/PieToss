@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PieToss": {
+      "commandName": "Project",
+      "commandLineArgs": " --giveup=8 --logfreq=4"
+    }
+  }
+}

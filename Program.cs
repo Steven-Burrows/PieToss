@@ -20,11 +20,17 @@ class Program
         {
             if (arg.StartsWith("--giveup=", StringComparison.OrdinalIgnoreCase) && long.TryParse(arg[9..], out var parsedGiveup))
             {
-                giveup = parsedGiveup;
+                if (parsedGiveup > 0 && parsedGiveup < 19)
+                    giveup = (long)Math.Pow(10,parsedGiveup);
+                else
+                    giveup = parsedGiveup;
             }
             else if (arg.StartsWith("--logFreq=", StringComparison.OrdinalIgnoreCase) && int.TryParse(arg[10..], out var parsedLogFreq))
             {
-                logFreq = parsedLogFreq;
+                if (parsedLogFreq > 0 && parsedLogFreq < 19)
+                    logFreq = (int)Math.Pow(10,parsedLogFreq);
+                else
+                    logFreq = parsedLogFreq;
             }
             else if (arg.StartsWith("--sets=", StringComparison.OrdinalIgnoreCase) && int.TryParse(arg[7..], out var parsedSets))
             {
@@ -125,7 +131,7 @@ class Program
                                 result.MaxStreak = maxStreak;
                                 result.PiEstimate = estimate;
 
-                                Console.WriteLine($"\nResult {resultDisplay} - DP {result.DecimalPlaces} - Sequences {seqCounter:N0} - Max Streak {maxStreak:N0} - Total Coin Tosses {totalTosses:N0}\n");
+                                Console.WriteLine($"\n  Match! - Result {resultDisplay} - DP {result.DecimalPlaces} - Sequences {seqCounter:N0} - Max Streak {maxStreak:N0} - Total Coin Tosses {totalTosses:N0}\n");
                                 File.AppendAllText(outputPath, $"{resultDisplay},{result.DecimalPlaces},{estimate},{seqCounter},{totalTosses},{maxStreak}" + Environment.NewLine);
                                 //Console.Beep(1000, 50);
                             }
@@ -139,6 +145,8 @@ class Program
                         else
                         {
                             // Discard the sequence
+                            seqCounter++;
+                            seqSum += (decimal)0.5;
                         }
 
                         heads = 0;

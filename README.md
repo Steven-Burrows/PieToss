@@ -31,12 +31,14 @@ From the project folder:
 ### Command-line options
 
 - `--giveup=<long>`
-  - Maximum tosses allowed in a sequence before discarding it.
+  - Maximum tosses allowed in a sequence before discarding it.  
+  - 10^giveup e.g 8 = 100,000,000
   - `0` disables discard-by-limit.
   - Default: `0`
 
 - `--logFreq=<int>`
   - Log progress every N completed sequences.
+  - 10^logFreq e.g 4 = 10,000
   - `0` disables periodic progress logging.
   - Default: `1000`
 
