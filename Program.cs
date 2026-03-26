@@ -6,16 +6,31 @@ namespace PiToss;
 
 class Program
 {
-    static void Main()
+    static void Main(string[] args)
     {
         //
         // Estimates pi by repeatedly simulating fair coin toss sequences and
         // averaging the heads-to-tosses ratio at the first point where heads becomes the majority.
         // 
-        long giveup = (long)1e10; // Discard any streaks this long - Looks like a big number ? Bigger it is the more accurate the results
-        giveup = 0;
+        long giveup = 0; // Discard any streaks this long (0 = disabled)
         int sets = 10; // Number of result sets to generate (each set will find the first match for each decimal place from 2 to 8)
         var logFreq = 1000;
+
+        foreach (var arg in args)
+        {
+            if (arg.StartsWith("--giveup=", StringComparison.OrdinalIgnoreCase) && long.TryParse(arg[9..], out var parsedGiveup))
+            {
+                giveup = parsedGiveup;
+            }
+            else if (arg.StartsWith("--logFreq=", StringComparison.OrdinalIgnoreCase) && int.TryParse(arg[10..], out var parsedLogFreq))
+            {
+                logFreq = parsedLogFreq;
+            }
+            else if (arg.StartsWith("--sets=", StringComparison.OrdinalIgnoreCase) && int.TryParse(arg[7..], out var parsedSets))
+            {
+                sets = parsedSets;
+            }
+        }
 
         long seqCounter = 0;
         decimal seqSum = 0;
