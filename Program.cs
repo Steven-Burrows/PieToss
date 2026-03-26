@@ -84,6 +84,12 @@ class Program
                 {
                     heads++;
 
+                    //Is capslock on ? if so add show some debug
+                    if (Console.CapsLock && tosses % 1e6 == 0)
+                    {
+                        Console.WriteLine($"    Heads {heads:N0} - Tosses {tosses:N0} - Short {Math.Abs(tosses-(2*heads)):N0} - Total Tosses {(totalTosses+tosses):N0}");
+                    }
+
                     // Sequence ends when heads is more than half of tosses or giveup is reached
                     if ((2 * heads > tosses) || (giveup > 0 && tosses >= giveup))
                     {
@@ -111,7 +117,7 @@ class Program
 
                             if (logFreq > 0 && seqCounter % logFreq == 0)
                             {
-                                Console.WriteLine($"Result {resultDisplay} - Sequences {seqCounter:N0}  pi {(estimate):N10} ({maxStreak:N0}) TPS {Math.Log10(totalTossesAll / ((DateTime.Now - startTime).TotalSeconds)):N1}");
+                                Console.WriteLine($"Result {resultDisplay} - DP {1+results.Count(r=>r.Done)} - Sequences {seqCounter:N0}  pi {(estimate):N10} ({maxStreak:N0}) TPS {Math.Log10(totalTossesAll / ((DateTime.Now - startTime).TotalSeconds)):N1} Tosses {Math.Log10(totalTossesAll):N1}");
                                 File.AppendAllText(logPath, $"{resultDisplay},{seqCounter},{estimate},{Math.Log((double)estimate, Math.PI)},{totalTosses},{maxStreak}" + Environment.NewLine);
                             }
                         }
